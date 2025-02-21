@@ -43,7 +43,7 @@
 #define SMC_RMI_VERSION			SMC_RxI_CALL(0x0150)
 
 #define RMI_ABI_MAJOR_VERSION	1
-#define RMI_ABI_MINOR_VERSION	0
+#define RMI_ABI_MINOR_VERSION	1
 
 #define RMI_ABI_VERSION_GET_MAJOR(version) ((version) >> 16)
 #define RMI_ABI_VERSION_GET_MINOR(version) ((version) & 0xFFFF)
