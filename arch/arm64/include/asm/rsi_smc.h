@@ -190,4 +190,13 @@ struct realm_config {
  */
 #define SMC_RSI_HOST_CALL			SMC_RSI_FID(0x199)
 
+/*
+ * Enter auxiliary plane.
+ *
+ * arg1 == Auxiliary plane number
+ * arg2 == IPA of PlaneRun data structure
+ * ret0 == Status / error
+ */
+#define SMC_RSI_PLANE_ENTER			SMC_RSI_FID(0x1A3)
+
 #endif /* __ASM_RSI_SMC_H_ */

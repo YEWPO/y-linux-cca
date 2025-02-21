@@ -86,6 +86,17 @@ static inline long rsi_set_addr_range_state(phys_addr_t start,
 	return res.a0;
 }
 
+static inline long rsi_plane_enter(unsigned long plane_idx,
+				   phys_addr_t run_ptr)
+{
+	struct arm_smccc_res res;
+
+	arm_smccc_smc(SMC_RSI_PLANE_ENTER, plane_idx, run_ptr,
+		      0, 0, 0, 0, 0, &res);
+
+	return res.a0;
+}
+
 /**
  * rsi_attestation_token_init - Initialise the operation to retrieve an
  * attestation token.
