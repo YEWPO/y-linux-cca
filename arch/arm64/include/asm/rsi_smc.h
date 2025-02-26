@@ -236,4 +236,36 @@ struct plane_enter {
 	u64 gicv3_lrs[PLANE_GIC_NUM_LRS];
 } __aligned(0x800);
 
+/* RSI Plane Exit Reason Constants */
+#define RSI_EXIT_SYNC				UL(0)
+#define RSI_EXIT_IRQ				UL(1)
+#define RSI_EXIT_HOST				UL(2)
+
+struct plane_exit {
+	/* 0x000 */
+	u8 reason;
+
+	/* 0x100 */
+	u64 elr_el2			__aligned(0x100);
+	u64 esr_el2;
+	u64 far_el2;
+	u64 hpfar_el2;
+
+	/* 0x200 */
+	u64 gprs[PLANE_RUN_GPRS]	__aligned(0x100);
+
+	/* 0x300 */
+	u64 gicv3_hcr			__aligned(0x100);
+	u64 gicv3_lrs[PLANE_GIC_NUM_LRS];
+	u64 gicv3_misr;
+	u64 gicv3_vmcr;
+
+	/* 0x400 */
+	u64 cntp_ctl			__aligned(0x100);
+	u64 cntp_cval;
+	u64 cntv_ctl;
+	u64 cntv_cval;
+} __aligned(0x800);
+
+
 #endif /* __ASM_RSI_SMC_H_ */
