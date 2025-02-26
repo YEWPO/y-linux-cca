@@ -199,4 +199,41 @@ struct realm_config {
  */
 #define SMC_RSI_PLANE_ENTER			SMC_RSI_FID(0x1A3)
 
+/* Plane Run Constants */
+#define PLANE_RUN_GPRS				31
+#define PLANE_GIC_NUM_LRS			16
+
+/* RSI Trap Constants */
+#define RSI_NO_TRAP				UL(0)
+#define RSI_TRAP				UL(1)
+
+/* RSI GIC Owner Constants */
+#define RSI_GIC_OWNER_0				UL(0)
+#define RSI_GIC_OWNER_N				UL(1)
+
+/* RSI Enter Flags */
+#define PLANE_ENTER_FLAG_TRAP_WFI		UL(1<<0)
+#define PLANE_ENTER_FLAG_TRAP_WFE		UL(1<<1)
+#define PLANE_ENTER_FLAG_TRAP_HC		UL(1<<2)
+#define PLANE_ENTER_FLAG_GIC_OWNER		UL(1<<3)
+
+#define PLANE_ENTER_FLAG_SIZE			(4)
+#define PLANE_ENTER_FLAG_MASK			((1 << PLANE_ENTER_FLAG_SIZE) - 1)
+#define PLANE_ENTER_FLAG_SET(x, flag)		((x) |= (flag))
+#define PLANE_ENTER_FLAG_CLEAR(x, flag)		((x) &= ~(flag))
+#define PLANE_ENTER_FLAG_IS_SET(x, flag)	((x) & (flag))
+
+struct plane_enter {
+	/* 0x000 */
+	u64 flags;
+	u64 pc;
+
+	/* 0x100 */
+	u64 gprs[PLANE_RUN_GPRS]	__aligned(0x100);
+
+	/* 0x200 */
+	u64 gicv3_hcr			__aligned(0x100);
+	u64 gicv3_lrs[PLANE_GIC_NUM_LRS];
+} __aligned(0x800);
+
 #endif /* __ASM_RSI_SMC_H_ */
