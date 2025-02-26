@@ -267,5 +267,9 @@ struct plane_exit {
 	u64 cntv_cval;
 } __aligned(0x800);
 
+struct plane_run {
+	struct plane_enter enter;
+	struct plane_exit exit;
+};
 
 #endif /* __ASM_RSI_SMC_H_ */
