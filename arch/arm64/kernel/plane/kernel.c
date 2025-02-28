@@ -9,7 +9,7 @@ void plane_kernel_main(void)
 	if (!is_realm_world())
 		return;
 
-	struct plane_run *run = (struct plane_run *)get_zeroed_page(GFP_KERNEL);
+	pr_info("P0: P0 World!\n");
 
-	rsi_plane_enter(1, virt_to_phys(run));
+	plane_context_init();
 }

@@ -13,7 +13,7 @@
 #include <asm/mem_encrypt.h>
 #include <asm/rsi.h>
 
-static struct realm_config config;
+struct realm_config config;
 
 unsigned long prot_ns_shared;
 EXPORT_SYMBOL(prot_ns_shared);
