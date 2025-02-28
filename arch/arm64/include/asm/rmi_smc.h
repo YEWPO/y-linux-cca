@@ -88,6 +88,8 @@ enum rmi_ripas {
 #define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
 #define RMI_REALM_PARAM_FLAG_PMU		BIT(2)
 
+#define RMI_MAX_AUX_PLANES_NUM			3
+
 /*
  * Note many of these fields are smaller than u64 but all fields have u64
  * alignment, so use u64 to ensure correct alignment.
@@ -102,11 +104,13 @@ struct realm_params {
 			u64 num_wps;
 			u64 pmu_num_ctrs;
 			u64 hash_algo;
+			u64 num_aux_planes;
 		};
 		u8 padding1[0x400];
 	};
 	union { /* 0x400 */
 		u8 rpv[64];
+		u64 ats_plane;
 		u8 padding2[0x400];
 	};
 	union { /* 0x800 */
@@ -115,8 +119,17 @@ struct realm_params {
 			u64 rtt_base;
 			s64 rtt_level_start;
 			u64 rtt_num_start;
+			u64 flags1;
+			u64 mecid;
 		};
-		u8 padding3[0x800];
+		u8 padding3[0x700];
+	};
+	union { /* 0xf00 */
+		struct {
+			u16 aux_vmid[RMI_MAX_AUX_PLANES_NUM];
+			u64 aux_rtt_base[RMI_MAX_AUX_PLANES_NUM];
+		};
+		u8 padding4[0x100];
 	};
 };
 
