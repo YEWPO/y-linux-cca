@@ -398,6 +398,7 @@ static int realm_create_rd(struct kvm *kvm)
 	params->vmid = realm->vmid;
 	params->num_bps = SYS_FIELD_GET(ID_AA64DFR0_EL1, BRPs, dfr0);
 	params->num_wps = SYS_FIELD_GET(ID_AA64DFR0_EL1, WRPs, dfr0);
+	params->num_aux_planes = 1; /* TODO: Set this number as needed */
 
 	if (kvm->arch.arm_pmu) {
 		params->pmu_num_ctrs = kvm->arch.pmcr_n;
