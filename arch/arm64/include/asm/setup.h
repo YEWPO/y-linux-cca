@@ -7,7 +7,7 @@
 
 #include <uapi/asm/setup.h>
 
-#include <asm/p0.h>
+#include <asm/plane.h>
 
 /*
  * These two variables are used in the head.S file.

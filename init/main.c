@@ -703,8 +703,6 @@ static noinline void __ref __noreturn rest_init(void)
 	struct task_struct *tsk;
 	int pid;
 
-	p0_main();
-
 	rcu_scheduler_starting();
 	/*
 	 * We need to spawn init first so that it obtains pid 1, however
@@ -1102,6 +1100,8 @@ void start_kernel(void)
 	acpi_subsystem_init();
 	arch_post_acpi_subsys_init();
 	kcsan_init();
+
+	plane_kernel_main();
 
 	/* Do the rest non-__init'ed, we're now alive */
 	rest_init();
