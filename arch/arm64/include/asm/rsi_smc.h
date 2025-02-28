@@ -129,6 +129,9 @@ struct realm_config {
 		struct {
 			unsigned long ipa_bits; /* Width of IPA in bits */
 			unsigned long hash_algo; /* Hash algorithm */
+			unsigned long num_aux_planes; /* Number of auxiliary planes */
+			unsigned long gicv3_vtr; /* GICv3 VGIC Type Value */
+			unsigned long ats_plane; /* ATS Feature */
 		};
 		u8 pad[0x200];
 	};
