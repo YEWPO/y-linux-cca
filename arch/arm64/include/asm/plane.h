@@ -21,7 +21,11 @@ struct plane_context {
 	u64 gprs[PLANE_GPRS_NUM];
 };
 
+/* Kernel */
 void plane_kernel_main(void);
+
+/* Context */
 void plane_context_init(void);
+struct plane_context *get_switchable_plane(void);
 
 #endif // __ASM_PLANES_H_
