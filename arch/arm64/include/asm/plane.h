@@ -12,7 +12,7 @@
 #define PLANE_MAX_AUX_PLANES_NUM	3
 
 /* Planes Context */
-struct plane_context {
+struct aux_plane_context {
 	u64 state;
 	u64 index;
 	struct plane_run *run;
@@ -27,5 +27,6 @@ void plane_kernel_main(void);
 /* Context */
 void plane_context_init(void);
 int get_switchable_plane(void);
+void switch_to_aux_plane(int plane_index);
 
 #endif // __ASM_PLANES_H_
