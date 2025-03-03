@@ -2,11 +2,10 @@
 #define __ASM_PLANES_H
 
 /* Planes State */
-#define PLANE_STATE_IDLE		0
-#define PLANE_STATE_PENDING		1
-#define PLANE_STATE_ACTIVE		2
-#define PLANE_STATE_ABORT		3
-#define PLANE_STATE_STOPPED		4
+#define PLANE_STATE_PENDING		0
+#define PLANE_STATE_ACTIVE		1
+#define PLANE_STATE_ABORT		2
+#define PLANE_STATE_STOPPED		3
 
 #define PLANE_GPRS_NUM			31
 
@@ -14,8 +13,9 @@
 
 /* Planes Context */
 struct plane_context {
-	u64 plane_state;
-	u64 plane_index;
+	u64 state;
+	u64 index;
+	struct plane_run *run;
 
 	u64 pc;
 	u64 gprs[PLANE_GPRS_NUM];
@@ -26,6 +26,6 @@ void plane_kernel_main(void);
 
 /* Context */
 void plane_context_init(void);
-struct plane_context *get_switchable_plane(void);
+int get_switchable_plane(void);
 
 #endif // __ASM_PLANES_H_

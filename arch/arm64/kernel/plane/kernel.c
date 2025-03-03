@@ -7,6 +7,11 @@
 static void plane_mainloop(void)
 {
 	for (;;) {
+		int switchable_plane = get_switchable_plane();
+
+		/**
+		 * TODO: switch to the switchable plane
+		 */
 	}
 }
 
