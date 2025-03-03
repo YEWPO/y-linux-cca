@@ -6,12 +6,9 @@
 
 static void plane_mainloop(void)
 {
-	for (;;) {
+	for (int i = 0; i < 1; i++) { /* TODO: change to infinite loop */
 		int switchable_plane_index = get_switchable_plane();
 
-		/**
-		 * TODO: switch to the switchable plane
-		 */
 		switch_to_aux_plane(switchable_plane_index);
 	}
 }

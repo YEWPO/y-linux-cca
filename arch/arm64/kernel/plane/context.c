@@ -12,18 +12,41 @@ struct aux_plane_context aux_planes[PLANE_MAX_AUX_PLANES_NUM];
 
 static void save_aux_plane_context(int plane_index)
 {
-	/**
-	 * TODO: save the aux plane context
-	 */
+	WARN_ON(plane_index < 1 || plane_index > CONFIG_AUX_PLANES_NUM);
+
+	struct aux_plane_context *plane = &aux_planes[PLANE_TO_ARR_INDEX(plane_index)];
+	struct plane_run *run = plane->run;
+
+	WARN_ON(plane->state != PLANE_STATE_ACTIVE);
+
+	/* Save the aux plane context */
+	plane->pc = run->enter.pc;
+	memcpy(plane->gprs, run->enter.gprs, sizeof(run->enter.gprs));
+
+	plane->state = PLANE_STATE_STOPPED;
 }
 
 static void restore_aux_plane_context(int plane_index)
 {
-	/**
-	 * TODO: restore the aux plane context
-	 */
+	WARN_ON(plane_index < 1 || plane_index > CONFIG_AUX_PLANES_NUM);
+
+	struct aux_plane_context *plane = &aux_planes[PLANE_TO_ARR_INDEX(plane_index)];
+	struct plane_run *run = plane->run;
+
+	WARN_ON(plane->state != PLANE_STATE_PENDING);
+
+	/* Restore the aux plane context */
+	run->enter.pc = plane->pc;
+	memcpy(run->enter.gprs, plane->gprs, sizeof(run->enter.gprs));
+
+	plane->state = PLANE_STATE_ACTIVE;
 }
 
+/**
+ * switch_to_aux_plane - Switch to the auxiliary plane
+ *
+ * @plane_index: The auxiliary plane index
+ */
 void switch_to_aux_plane(int plane_index)
 {
 	struct aux_plane_context *plane = &aux_planes[PLANE_TO_ARR_INDEX(plane_index)];
@@ -34,13 +57,13 @@ void switch_to_aux_plane(int plane_index)
 	WARN_ON(state != PLANE_STATE_PENDING);
 
 	/* Restore the aux plane context */
-	restore_aux_plane_context(PLANE_TO_ARR_INDEX(plane_index));
+	restore_aux_plane_context(plane_index);
 
 	/* Enter the aux plane */
 	rsi_plane_enter(plane_index, virt_to_phys(run));
 
-	/* Save the aux plane context and restore the main plane context */
-	save_aux_plane_context(PLANE_TO_ARR_INDEX(plane_index));
+	/* Save the aux plane context */
+	save_aux_plane_context(plane_index);
 }
 
 /**
@@ -71,6 +94,8 @@ void plane_context_init(void)
 		aux_planes[i].index = ARR_TO_PLANE_INDEX(i);
 		aux_planes[i].state = PLANE_STATE_PENDING;
 		aux_planes[i].run = (struct plane_run *)get_zeroed_page(GFP_KERNEL);
+
+		aux_planes[i].pc = 0x80000000;
 
 		pr_info("P0: Plane %d's context is initialized\n", ARR_TO_PLANE_INDEX(i));
 	}
