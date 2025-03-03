@@ -1101,8 +1101,6 @@ void start_kernel(void)
 	arch_post_acpi_subsys_init();
 	kcsan_init();
 
-	plane_kernel_main();
-
 	/* Do the rest non-__init'ed, we're now alive */
 	rest_init();
 
@@ -1500,6 +1498,8 @@ static int __ref kernel_init(void *unused)
 		pr_err("Failed to execute %s (error %d)\n",
 		       ramdisk_execute_command, ret);
 	}
+
+	plane_kernel_main();
 
 	/*
 	 * We try each of these until one succeeds.

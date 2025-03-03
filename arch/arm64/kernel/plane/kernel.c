@@ -10,6 +10,10 @@ static void plane_mainloop(void)
 		int switchable_plane_index = get_switchable_plane();
 
 		switch_to_aux_plane(switchable_plane_index);
+
+		/*
+		 * TODO: Handle exceptions
+		 */
 	}
 }
 
