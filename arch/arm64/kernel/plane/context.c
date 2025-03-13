@@ -20,8 +20,8 @@ static void save_aux_plane_context(int plane_index)
 	WARN_ON(plane->state != PLANE_STATE_ACTIVE);
 
 	/* Save the aux plane context */
-	plane->pc = run->enter.pc;
-	memcpy(plane->gprs, run->enter.gprs, sizeof(run->enter.gprs));
+	plane->pc = run->exit.elr_el2;
+	memcpy(plane->gprs, run->exit.gprs, sizeof(run->exit.gprs));
 
 	plane->state = PLANE_STATE_STOPPED;
 }
@@ -61,6 +61,8 @@ void switch_to_aux_plane(int plane_index)
 
 	/* Enter the aux plane */
 	rsi_plane_enter(plane_index, virt_to_phys(run));
+
+	pr_info("I'm come back!\n");
 
 	/* Save the aux plane context */
 	save_aux_plane_context(plane_index);
