@@ -1,8 +1,40 @@
+#include <asm/esr.h>
 #include <asm/plane.h>
 
 static void handle_sync_exception(struct aux_plane_context *plane)
 {
 	pr_info("[p0]\tHandling synchronous exception\n");
+
+	struct plane_exit *plane_exit = &plane->run->exit;
+
+	unsigned long elr = plane_exit->elr_el2;
+	unsigned long esr = plane_exit->esr_el2;
+	unsigned long far = plane_exit->far_el2;
+	unsigned long hpfar = plane_exit->hpfar_el2;
+
+	pr_info("[p0]\tELR_EL2: 0x%lx\tESR_EL2: 0x%lx\tFAR_EL2: 0x%lx\tHPFAR_EL2: 0x%lx\n",
+		elr, esr, far, hpfar);
+
+	switch (ESR_ELx_EC(esr)) {
+		case ESR_ELx_EC_WFx:
+			pr_info("[p0]\tWFX exception\n");
+			break;
+		case ESR_ELx_EC_DABT_LOW:
+			pr_info("[p0]\tData abort exception\n");
+			break;
+		case ESR_ELx_EC_IABT_LOW:
+			pr_info("[p0]\tInstruction abort exception\n");
+			break;
+		case ESR_ELx_EC_HVC64:
+			pr_info("[p0]\tHVC64 exception\n");
+			break;
+		case ESR_ELx_EC_SMC64:
+			pr_info("[p0]\tSMC64 exception\n");
+			break;
+		default:
+			pr_info("[p0]\tUnknown exception\n");
+			break;
+	}
 }
 
 static void handle_irq_exception(struct aux_plane_context *plane)
