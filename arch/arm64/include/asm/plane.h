@@ -1,6 +1,8 @@
 #ifndef __ASM_PLANES_H
 #define __ASM_PLANES_H
 
+#include <asm/io.h>
+
 /* Planes State */
 #define PLANE_STATE_PENDING		0
 #define PLANE_STATE_ACTIVE		1
@@ -28,5 +30,6 @@ void plane_kernel_main(void);
 void plane_context_init(void);
 int get_switchable_plane(void);
 void switch_to_aux_plane(int plane_index);
+void handle_aux_plane_exception(struct aux_plane_context *plane);
 
 #endif // __ASM_PLANES_H_

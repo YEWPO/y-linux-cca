@@ -1,6 +1,5 @@
 #include <linux/hugetlb.h>
 
-#include <asm/io.h>
 #include <asm/plane.h>
 
 extern struct realm_config config;
@@ -19,6 +18,8 @@ static void save_aux_plane_context(int plane_index)
 
 	WARN_ON(plane->state != PLANE_STATE_ACTIVE);
 
+	memset(&run->enter, 0, sizeof(run->enter));
+
 	/* Save the aux plane context */
 	plane->pc = run->exit.elr_el2;
 	memcpy(plane->gprs, run->exit.gprs, sizeof(run->exit.gprs));
@@ -34,6 +35,8 @@ static void restore_aux_plane_context(int plane_index)
 	struct plane_run *run = plane->run;
 
 	WARN_ON(plane->state != PLANE_STATE_PENDING);
+
+	memset(&run->exit, 0, sizeof(run->exit));
 
 	/* Restore the aux plane context */
 	run->enter.pc = plane->pc;
@@ -62,10 +65,10 @@ void switch_to_aux_plane(int plane_index)
 	/* Enter the aux plane */
 	rsi_plane_enter(plane_index, virt_to_phys(run));
 
-	pr_info("I'm come back!\n");
-
 	/* Save the aux plane context */
 	save_aux_plane_context(plane_index);
+
+	handle_aux_plane_exception(plane);
 }
 
 /**
@@ -79,7 +82,7 @@ int get_switchable_plane(void)
 
 	for (;;) {
 		if (aux_planes[loop_aux_plane].state == PLANE_STATE_PENDING) {
-			pr_info("P0: Plane %d is selected\n", ARR_TO_PLANE_INDEX(loop_aux_plane));
+			pr_info("[p0]\tPlane %d is selected\n", ARR_TO_PLANE_INDEX(loop_aux_plane));
 			return ARR_TO_PLANE_INDEX(loop_aux_plane);
 		}
 
@@ -99,6 +102,6 @@ void plane_context_init(void)
 
 		aux_planes[i].pc = 0x80000000;
 
-		pr_info("P0: Plane %d's context is initialized\n", ARR_TO_PLANE_INDEX(i));
+		pr_info("[p0]\tPlane %d's context is initialized\n", ARR_TO_PLANE_INDEX(i));
 	}
 }
