@@ -101,6 +101,7 @@ void plane_context_init(void)
 		aux_planes[i].run = (struct plane_run *)get_zeroed_page(GFP_KERNEL);
 
 		aux_planes[i].pc = 0x80000000;
+		aux_planes[i].gprs[0] = 0x8fe00000;
 
 		pr_info("[p0]\tPlane %d's context is initialized\n", ARR_TO_PLANE_INDEX(i));
 	}
