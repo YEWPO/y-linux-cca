@@ -30,6 +30,10 @@ void plane_kernel_main(void);
 void plane_context_init(void);
 int get_switchable_plane(void);
 void switch_to_aux_plane(int plane_index);
+
+/* Exception */
 void handle_aux_plane_exception(struct aux_plane_context *plane);
+bool handle_aux_plane_undef_exception(struct aux_plane_context *plane);
+void skip_pc(struct aux_plane_context *plane);
 
 #endif // __ASM_PLANES_H_

@@ -1,19 +1,18 @@
 #include <asm/esr.h>
 #include <asm/plane.h>
 
+void skip_pc(struct aux_plane_context *plane)
+{
+	plane->pc += 4UL;
+}
+
 static void handle_sync_exception(struct aux_plane_context *plane)
 {
 	pr_info("[p0]\tHandling synchronous exception\n");
 
 	struct plane_exit *plane_exit = &plane->run->exit;
 
-	unsigned long elr = plane_exit->elr_el2;
 	unsigned long esr = plane_exit->esr_el2;
-	unsigned long far = plane_exit->far_el2;
-	unsigned long hpfar = plane_exit->hpfar_el2;
-
-	pr_info("[p0]\tELR_EL2: 0x%lx\tESR_EL2: 0x%lx\tFAR_EL2: 0x%lx\tHPFAR_EL2: 0x%lx\n",
-		elr, esr, far, hpfar);
 
 	switch (ESR_ELx_EC(esr)) {
 		case ESR_ELx_EC_WFx:
@@ -61,6 +60,16 @@ void handle_aux_plane_exception(struct aux_plane_context *plane)
 	WARN_ON(plane->state != PLANE_STATE_STOPPED);
 	WARN_ON(plane_exit == NULL);
 
+	unsigned long elr = plane_exit->elr_el2;
+	unsigned long esr = plane_exit->esr_el2;
+	unsigned long far = plane_exit->far_el2;
+	unsigned long hpfar = plane_exit->hpfar_el2;
+
+	pr_info("[p0]\tException infos:\n"
+		"ELR_EL2 =\t0x%016lx\tESR_EL2 =\t0x%016lx\n"
+		"FAR_EL2 =\t0x%016lx\tHPFAR_EL2 =\t0x%016lx\n",
+		elr, esr, far, hpfar);
+
 	switch (plane_exit->reason) {
 	case RSI_EXIT_SYNC:
 		handle_sync_exception(plane);
@@ -72,9 +81,10 @@ void handle_aux_plane_exception(struct aux_plane_context *plane)
 		handle_host_exception(plane);
 		break;
 	default:
-		pr_err("[p0]\tPlane %d exited with unknown reason\n", plane_index);
+		if (!handle_aux_plane_undef_exception(plane)) {
+			pr_info("[p0]\tUnhandled P%d's exception\n", plane_index);
+			for (;;);
+		}
 		break;
 	}
-
-	for (;;);
 }
