@@ -52,6 +52,26 @@ static bool handle_host_exception(struct aux_plane_context *plane)
 	return false;
 }
 
+static bool handle_aux_plane_undef_exception(struct aux_plane_context *plane)
+{
+	pr_info("[p0]\tHandle undefined exceptions\n");
+
+	struct plane_exit *plane_exit = &plane->run->exit;
+
+	unsigned long esr = plane_exit->esr_el2;
+	bool ret = false;
+
+	switch (ESR_ELx_EC(esr)) {
+		case ESR_ELx_EC_SYS64:
+			ret = handle_aux_plane_sys64_exception(plane);
+			break;
+		default:
+			pr_err("[p0]\tUnhandled undefined exception\n");
+	}
+
+	return ret;
+}
+
 /**
  * handle_aux_plane_exception - Handle the exception for the auxiliary plane
  *

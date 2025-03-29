@@ -35,7 +35,9 @@ void switch_to_aux_plane(int plane_index);
 
 /* Exception */
 bool handle_aux_plane_exception(struct aux_plane_context *plane);
-bool handle_aux_plane_undef_exception(struct aux_plane_context *plane);
 void skip_pc(struct aux_plane_context *plane);
+
+/* Sysreg */
+bool handle_aux_plane_sys64_exception(struct aux_plane_context *plane);
 
 #endif // __ASM_PLANES_H_
