@@ -2,6 +2,8 @@
 
 #include <asm/plane.h>
 
+#include <uapi/asm/ptrace.h>
+
 extern struct realm_config config;
 #define CONFIG_AUX_PLANES_NUM (config.num_aux_planes)
 
@@ -22,6 +24,7 @@ static void save_aux_plane_context(int plane_index)
 
 	/* Save the aux plane context */
 	plane->pc = run->exit.elr_el2;
+	plane->pstate = run->exit.spsr_el2;
 	memcpy(plane->gprs, run->exit.gprs, sizeof(run->exit.gprs));
 
 	plane->state = PLANE_STATE_STOPPED;
@@ -40,6 +43,7 @@ static void restore_aux_plane_context(int plane_index)
 
 	/* Restore the aux plane context */
 	run->enter.pc = plane->pc;
+	run->enter.spsr_el2 = plane->pstate;
 	memcpy(run->enter.gprs, plane->gprs, sizeof(run->enter.gprs));
 
 	plane->state = PLANE_STATE_ACTIVE;
@@ -109,6 +113,8 @@ void plane_context_init(void)
 
 		aux_planes[i].pc = 0x80000000;
 		aux_planes[i].gprs[0] = 0x8fe00000;
+		aux_planes[i].pstate = PSR_MODE_EL1h
+					| PSR_F_BIT | PSR_I_BIT | PSR_A_BIT | PSR_D_BIT;
 
 		pr_info("[p0]\tPlane %d's context is initialized\n", ARR_TO_PLANE_INDEX(i));
 	}

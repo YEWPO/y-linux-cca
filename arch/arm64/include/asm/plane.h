@@ -22,6 +22,7 @@ struct aux_plane_context {
 
 	u64 pc;
 	u64 gprs[PLANE_GPRS_NUM];
+	u64 pstate;
 };
 
 /* Kernel */
