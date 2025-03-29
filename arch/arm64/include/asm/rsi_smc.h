@@ -219,6 +219,7 @@ struct realm_config {
 #define PLANE_ENTER_FLAG_TRAP_WFE		UL(1<<1)
 #define PLANE_ENTER_FLAG_TRAP_HC		UL(1<<2)
 #define PLANE_ENTER_FLAG_GIC_OWNER		UL(1<<3)
+#define PLANE_ENTER_FLAG_GIC_SIMD		UL(1<<4)
 
 #define PLANE_ENTER_FLAG_SIZE			(4)
 #define PLANE_ENTER_FLAG_MASK			((1 << PLANE_ENTER_FLAG_SIZE) - 1)
@@ -237,6 +238,9 @@ struct plane_enter {
 	/* 0x200 */
 	u64 gicv3_hcr			__aligned(0x100);
 	u64 gicv3_lrs[PLANE_GIC_NUM_LRS];
+
+	/* 0x300 */
+	u64 spsr_el2			__aligned(0x100);
 } __aligned(0x800);
 
 /* RSI Plane Exit Reason Constants */
@@ -253,6 +257,7 @@ struct plane_exit {
 	u64 esr_el2;
 	u64 far_el2;
 	u64 hpfar_el2;
+	u64 spsr_el2;
 
 	/* 0x200 */
 	u64 gprs[PLANE_RUN_GPRS]	__aligned(0x100);
