@@ -4,10 +4,11 @@
 #include <asm/io.h>
 
 /* Planes State */
-#define PLANE_STATE_PENDING		0
-#define PLANE_STATE_ACTIVE		1
-#define PLANE_STATE_ABORT		2
-#define PLANE_STATE_STOPPED		3
+#define PLANE_STATE_IDLE		0
+#define PLANE_STATE_PENDING		1
+#define PLANE_STATE_ACTIVE		2
+#define PLANE_STATE_ABORT		3
+#define PLANE_STATE_STOPPED		4
 
 #define PLANE_GPRS_NUM			31
 

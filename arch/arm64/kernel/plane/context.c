@@ -88,12 +88,12 @@ int get_switchable_plane(void)
 	static int loop_aux_plane = 0;
 
 	for (;;) {
+		loop_aux_plane = (loop_aux_plane + 1) % CONFIG_AUX_PLANES_NUM;
+
 		if (aux_planes[loop_aux_plane].state == PLANE_STATE_PENDING) {
 			pr_info("[p0]\tPlane %d is selected\n", ARR_TO_PLANE_INDEX(loop_aux_plane));
 			return ARR_TO_PLANE_INDEX(loop_aux_plane);
 		}
-
-		loop_aux_plane = (loop_aux_plane + 1) % CONFIG_AUX_PLANES_NUM;
 	}
 }
 
