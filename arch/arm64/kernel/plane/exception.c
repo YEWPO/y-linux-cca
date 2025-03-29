@@ -6,7 +6,7 @@ void skip_pc(struct aux_plane_context *plane)
 	plane->pc += 4UL;
 }
 
-static void handle_sync_exception(struct aux_plane_context *plane)
+static bool handle_sync_exception(struct aux_plane_context *plane)
 {
 	pr_info("[p0]\tHandling synchronous exception\n");
 
@@ -34,16 +34,22 @@ static void handle_sync_exception(struct aux_plane_context *plane)
 			pr_info("[p0]\tUnknown exception\n");
 			break;
 	}
+
+	return false;
 }
 
-static void handle_irq_exception(struct aux_plane_context *plane)
+static bool handle_irq_exception(struct aux_plane_context *plane)
 {
 	pr_info("[p0]\tHandling IRQ exception\n");
+
+	return false;
 }
 
-static void handle_host_exception(struct aux_plane_context *plane)
+static bool handle_host_exception(struct aux_plane_context *plane)
 {
 	pr_info("[p0]\tHandling host exception\n");
+
+	return false;
 }
 
 /**
@@ -51,7 +57,7 @@ static void handle_host_exception(struct aux_plane_context *plane)
  *
  * @plane: The auxiliary plane context
  */
-void handle_aux_plane_exception(struct aux_plane_context *plane)
+bool handle_aux_plane_exception(struct aux_plane_context *plane)
 {
 	int plane_index = plane->index;
 	struct plane_exit *plane_exit = &plane->run->exit;
@@ -70,21 +76,22 @@ void handle_aux_plane_exception(struct aux_plane_context *plane)
 		"FAR_EL2 =\t0x%016lx\tHPFAR_EL2 =\t0x%016lx\n",
 		elr, esr, far, hpfar);
 
+	bool ret = false;
+
 	switch (plane_exit->reason) {
 	case RSI_EXIT_SYNC:
-		handle_sync_exception(plane);
+		ret = handle_sync_exception(plane);
 		break;
 	case RSI_EXIT_IRQ:
-		handle_irq_exception(plane);
+		ret = handle_irq_exception(plane);
 		break;
 	case RSI_EXIT_HOST:
-		handle_host_exception(plane);
+		ret = handle_host_exception(plane);
 		break;
 	default:
-		if (!handle_aux_plane_undef_exception(plane)) {
-			pr_info("[p0]\tUnhandled P%d's exception\n", plane_index);
-			for (;;);
-		}
+		ret = handle_aux_plane_undef_exception(plane);
 		break;
 	}
+
+	return ret;
 }

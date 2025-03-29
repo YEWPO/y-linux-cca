@@ -68,7 +68,14 @@ void switch_to_aux_plane(int plane_index)
 	/* Save the aux plane context */
 	save_aux_plane_context(plane_index);
 
-	handle_aux_plane_exception(plane);
+	/* Handle the aux plane exit */
+	if (handle_aux_plane_exception(plane)) {
+		plane->state = PLANE_STATE_PENDING;
+		pr_info("[p0]\tHandled P%d's exception %d\n", plane_index, run->exit.reason);
+	} else {
+		plane->state = PLANE_STATE_ABORT;
+		pr_info("[p0]\tUnhandled P%d's exception %d\n", plane_index, run->exit.reason);
+	}
 }
 
 /**

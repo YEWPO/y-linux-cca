@@ -29,11 +29,18 @@ static bool handle_aux_plane_sys64(struct aux_plane_context *plane)
 		return false;
 	}
 
-	pr_info("[p0]\tUnhandled sys64 exception, rt = 0x%08x, sys_op = 0x%08x\n", rt, sys_op);
+	unsigned int dir = esr & ESR_ELx_SYS64_ISS_DIR_MASK;
+
+	if (dir == ESR_ELx_SYS64_ISS_DIR_READ) {
+		pr_info("[p0]\tUnhandled sys_op 0x%x read, target rt %d\n", sys_op, rt);
+	} else {
+		pr_info("[p0]\tUnhandled sys_op 0x%x write, target rt %d, write value is 0x%016llx\n",
+				sys_op, rt, plane->gprs[rt]);
+	}
 
 	skip_pc(plane);
 
-	return false;
+	return true;
 }
 
 bool handle_aux_plane_undef_exception(struct aux_plane_context *plane)
