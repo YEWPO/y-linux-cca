@@ -86,13 +86,51 @@ static inline long rsi_set_addr_range_state(phys_addr_t start,
 	return res.a0;
 }
 
-static inline long rsi_plane_enter(unsigned long plane_idx,
-				   phys_addr_t run_ptr)
+static inline unsigned long rsi_plane_enter(unsigned long plane_idx,
+					    phys_addr_t run_ptr)
 {
 	struct arm_smccc_res res;
 
 	arm_smccc_smc(SMC_RSI_PLANE_ENTER, plane_idx, run_ptr,
 		      0, 0, 0, 0, 0, &res);
+
+	return res.a0;
+}
+
+static inline unsigned long rsi_plane_sysreg_read(unsigned long plane_idx,
+						  unsigned long sysreg_addr,
+						  unsigned long *value_lower,
+						  unsigned long *value_upper)
+{
+	struct arm_smccc_res res;
+
+	arm_smccc_smc(SMC_RSI_PLANE_SYSREG_READ, plane_idx, sysreg_addr,
+			0, 0, 0, 0, 0, &res);
+
+	if (res.a0 == RSI_SUCCESS) {
+		if (value_lower) {
+			*value_lower = res.a1;
+		}
+		if (value_upper) {
+			/*
+			 * TODO: should check whether it is a 128 bits sysreg.
+			 */
+			*value_upper = res.a0;
+		}
+	}
+
+	return res.a0;
+}
+
+static inline unsigned long rsi_plane_sysreg_write(unsigned long plane_idx,
+						   unsigned long sysreg_addr,
+						   unsigned long value_lower,
+						   unsigned long value_upper)
+{
+	struct arm_smccc_res res;
+
+	arm_smccc_smc(SMC_RSI_PLANE_SYSREG_WRITE, plane_idx, sysreg_addr,
+			value_lower, value_upper, 0, 0, 0, &res);
 
 	return res.a0;
 }

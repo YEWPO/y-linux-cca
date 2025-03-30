@@ -202,6 +202,28 @@ struct realm_config {
  */
 #define SMC_RSI_PLANE_ENTER			SMC_RSI_FID(0x1A3)
 
+/*
+ * Read auxiliary plane sysreg.
+ *
+ * arg1 == Auxiliary plane number
+ * arg2 == Sysreg's address
+ * ret0 == Status / error
+ * ret1 == Lower 64 bits of system register value
+ * ret2 == Upper 64 bits of system register value
+ */
+#define SMC_RSI_PLANE_SYSREG_READ		SMC_RSI_FID(0x1AE)
+
+/*
+ * Write auxiliary plane sysreg
+ *
+ * arg1 == Auxiliary plane number
+ * arg2 == Sysreg's address
+ * arg3 == Lower 64 bits of system register value
+ * arg4 == Upper 64 bits of system register value
+ * ret0 == Status / error
+ */
+#define SMC_RSI_PLANE_SYSREG_WRITE		SMC_RSI_FID(0x1AF)
+
 /* Plane Run Constants */
 #define PLANE_RUN_GPRS				31
 #define PLANE_GIC_NUM_LRS			16
