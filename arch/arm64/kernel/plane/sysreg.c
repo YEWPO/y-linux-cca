@@ -2,33 +2,6 @@
 #include <asm/esr.h>
 #include <asm/sysreg-defs.h>
 
-static void emulate_sys64_mrs_op(struct aux_plane_context *plane)
-{
-	pr_info("[p0]\tEmulate sys64 exception sys mrs op\n");
-
-	unsigned long esr = plane->run->exit.esr_el2;
-
-	unsigned int rt = ESR_ELx_SYS64_ISS_RT(esr);
-	unsigned int sysreg = esr_sys64_to_sysreg(esr);
-	unsigned int dir = esr & ESR_ELx_SYS64_ISS_DIR_MASK;
-
-	BUG_ON(dir == ESR_ELx_SYS64_ISS_DIR_WRITE);
-
-	unsigned long sysreg_val = 0UL;
-
-	switch (sysreg) {
-		case SYS_ID_AA64DFR0_EL1:
-			sysreg_val = 0; /* All register not implemented */
-			break;
-		default:
-			pr_info("Unhandled sys64 sysreg 0x%x emulation\n", sysreg);
-			for(;;);
-	}
-
-	pr_info("[p0]\tWrite sysreg 0x%x value 0x%016lx to gprs[%d]\n", sysreg, sysreg_val, rt);
-	plane->gprs[rt] = sysreg_val;
-}
-
 bool handle_aux_plane_sys64_exception(struct aux_plane_context *plane)
 {
 	struct plane_exit *plane_exit = &plane->run->exit;
@@ -53,7 +26,14 @@ bool handle_aux_plane_sys64_exception(struct aux_plane_context *plane)
 	}
 
 	if ((esr & ESR_ELx_SYS64_ISS_SYS_MRS_OP_MASK) == ESR_ELx_SYS64_ISS_SYS_MRS_OP_VAL) {
-		emulate_sys64_mrs_op(plane);
+		pr_info("[p0]\tsys64 exception sys mrs op\n");
+
+		unsigned long value;
+		rsi_plane_sysreg_read(plane->index, sys_reg_to_rsi_sys_reg(sysreg), &value, (void *)0);
+
+		plane->gprs[rt] = value;
+		pr_info("[p0]\tHandled sys mrs op, write sysreg 0x%x's value 0x%016lx to gprs[%d]\n", sysreg, value, rt);
+
 		return true;
 	}
 

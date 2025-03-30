@@ -40,6 +40,8 @@
 	(((op0) << Op0_shift) | ((op1) << Op1_shift) | \
 	 ((crn) << CRn_shift) | ((crm) << CRm_shift) | \
 	 ((op2) << Op2_shift))
+#define sys_reg_to_rsi_sys_reg(sys_reg) \
+	(sys_reg >> 5)
 
 #define sys_insn	sys_reg
 
