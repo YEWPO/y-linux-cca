@@ -1,7 +1,7 @@
 #include <asm/esr.h>
 #include <asm/plane.h>
 
-void skip_pc(struct aux_plane_context *plane)
+static void skip_pc(struct aux_plane_context *plane)
 {
 	plane->pc += 4UL;
 }
@@ -64,6 +64,7 @@ static bool handle_aux_plane_undef_exception(struct aux_plane_context *plane)
 	switch (ESR_ELx_EC(esr)) {
 		case ESR_ELx_EC_SYS64:
 			ret = handle_aux_plane_sys64_exception(plane);
+			skip_pc(plane);
 			break;
 		default:
 			pr_err("[p0]\tUnhandled undefined exception\n");
