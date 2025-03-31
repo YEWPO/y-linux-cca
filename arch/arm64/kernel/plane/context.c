@@ -79,6 +79,14 @@ void switch_to_aux_plane(int plane_index)
 	} else {
 		plane->state = PLANE_STATE_ABORT;
 		pr_info("[p0]\tUnhandled P%d's exception %d\n", plane_index, run->exit.reason);
+
+		for(;;) {
+			static int dead_loop = 0;
+			dead_loop++;
+			if (dead_loop % 10000000 == 0) {
+				pr_info("[p0]\tDead loop %d\n", dead_loop / 10000000);
+			}
+		}
 	}
 }
 
