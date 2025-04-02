@@ -64,5 +64,6 @@ void init_aux_plane_gic(struct gic_sysregs *gic);
 
 /* Timer */
 void init_aux_plane_timer(struct timer_sysregs *timer);
+bool check_aux_plane_timer_pending(struct timer_sysregs *timer);
 
 #endif // __ASM_PLANES_H_

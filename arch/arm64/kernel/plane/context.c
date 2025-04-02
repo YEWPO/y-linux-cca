@@ -27,6 +27,18 @@ static void save_aux_plane_context(int plane_index)
 	plane->pstate = run->exit.spsr_el2;
 	memcpy(plane->gprs, run->exit.gprs, sizeof(run->exit.gprs));
 
+	/* Save the aux plane GIC context */
+	plane->gic.gicv3_hcr = run->exit.gicv3_hcr;
+	plane->gic.gicv3_misr = run->exit.gicv3_misr;
+	memcpy(plane->gic.gicv3_lrs, run->exit.gicv3_lrs, sizeof(run->exit.gicv3_lrs));
+	plane->gic.gicv3_vmcr = run->exit.gicv3_vmcr;
+
+	/* Save the aux plane timer context */
+	plane->timer.cntp_ctl = run->exit.cntp_ctl;
+	plane->timer.cntp_cval = run->exit.cntp_cval;
+	plane->timer.cntv_ctl = run->exit.cntv_ctl;
+	plane->timer.cntv_cval = run->exit.cntv_cval;
+
 	plane->state = PLANE_STATE_STOPPED;
 }
 
@@ -62,6 +74,18 @@ void switch_to_aux_plane(int plane_index)
 
 	WARN_ON(plane_index < 1 || plane_index > CONFIG_AUX_PLANES_NUM);
 	WARN_ON(state != PLANE_STATE_PENDING);
+
+	/* Check if the aux plane is pending */
+	if (check_aux_plane_timer_pending(&plane->timer)) {
+		pr_info("[p0]\tP%d's timer is pending\n", plane_index);
+		for (;;) {
+			static int dead_loop = 0;
+			dead_loop++;
+			if (dead_loop % 10000000 == 0) {
+				pr_info("[p0]\tDead loop %d\n", dead_loop / 10000000);
+			}
+		}
+	}
 
 	/* Restore the aux plane context */
 	restore_aux_plane_context(plane_index);
