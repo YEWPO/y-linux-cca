@@ -124,6 +124,9 @@ void plane_context_init(void)
 		aux_planes[i].pstate = PSR_MODE_EL1h
 					| PSR_F_BIT | PSR_I_BIT | PSR_A_BIT | PSR_D_BIT;
 
+		init_aux_plane_gic(&aux_planes[i].gic);
+		init_aux_plane_timer(&aux_planes[i].timer);
+
 		pr_info("[p0]\tPlane %d's context is initialized\n", ARR_TO_PLANE_INDEX(i));
 	}
 }
